@@ -1,0 +1,29 @@
+# fly.toml - 트레블AI 백엔드 (Fly.io 서버리스 스테이징)
+app = "travelai-api"
+primary_region = "nrt"  # 도쿄 리전 (한국 사용자 최저 지연)
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "8000"
+  LLM_MODEL = "claude-haiku-4-5"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    path = "/api/v1/health"
+    timeout = "5s"
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1
